@@ -722,3 +722,8 @@
 &pcie1_ep {
 	status = "disabled";
 };
+
+&wkup_gpio0 {
+	gpio-line-names = "uart-mode0", "uart-mode1", "uart-en",
+		"uart-terminate";
+};
