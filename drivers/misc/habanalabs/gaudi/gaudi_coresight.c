@@ -11,8 +11,6 @@
 #include "../include/gaudi/gaudi_masks.h"
 
 #include <uapi/misc/habanalabs.h>
-#include <linux/coresight.h>
-
 #define SPMU_SECTION_SIZE		MME0_ACC_SPMU_MAX_OFFSET
 #define SPMU_EVENT_TYPES_OFFSET		0x400
 #define SPMU_MAX_COUNTERS		6
@@ -527,7 +525,7 @@ static int gaudi_config_etf(struct hl_device *hdev,
 }
 
 static bool gaudi_etr_validate_address(struct hl_device *hdev, u64 addr,
-					u32 size, bool *is_host)
+					u64 size, bool *is_host)
 {
 	struct asic_fixed_properties *prop = &hdev->asic_prop;
 	struct gaudi_device *gaudi = hdev->asic_specific;
@@ -536,6 +534,12 @@ static bool gaudi_etr_validate_address(struct hl_device *hdev, u64 addr,
 	if (addr >> 50) {
 		dev_err(hdev->dev,
 			"ETR buffer address shouldn't exceed 50 bits\n");
+		return false;
+	}
+
+	if (addr > (addr + size)) {
+		dev_err(hdev->dev,
+			"ETR buffer size %llu overflow\n", size);
 		return false;
 	}
 
@@ -616,6 +620,11 @@ static int gaudi_config_etr(struct hl_device *hdev,
 			dev_err(hdev->dev, "ETR buffer address is invalid\n");
 			return -EINVAL;
 		}
+
+		gaudi_mmu_prepare_reg(hdev, mmPSOC_GLOBAL_CONF_TRACE_ARUSER,
+						hdev->compute_ctx->asid);
+		gaudi_mmu_prepare_reg(hdev, mmPSOC_GLOBAL_CONF_TRACE_AWUSER,
+						hdev->compute_ctx->asid);
 
 		msb = upper_32_bits(input->buffer_address) >> 8;
 		msb &= PSOC_GLOBAL_CONF_TRACE_ADDR_MSB_MASK;

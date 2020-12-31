@@ -1376,7 +1376,7 @@ static int sky2_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
 	case SIOCGMIIPHY:
 		data->phy_id = PHY_ADDR_MARV;
 
-		/* fallthru */
+		fallthrough;
 	case SIOCGMIIREG: {
 		u16 val = 0;
 
@@ -2764,7 +2764,7 @@ static int sky2_status_intr(struct sky2_hw *hw, int to_do, u16 idx)
 
 		case OP_RXCHKSVLAN:
 			sky2_rx_tag(sky2, length);
-			/* fall through */
+			fallthrough;
 		case OP_RXCHKS:
 			if (likely(dev->features & NETIF_F_RXCSUM))
 				sky2_rx_checksum(sky2, status);
@@ -4900,7 +4900,7 @@ static const char *sky2_name(u8 chipid, char *buf, int sz)
 	};
 
 	if (chipid >= CHIP_ID_YUKON_XL && chipid <= CHIP_ID_YUKON_OP_2)
-		strncpy(buf, name[chipid - CHIP_ID_YUKON_XL], sz);
+		snprintf(buf, sz, "%s", name[chipid - CHIP_ID_YUKON_XL]);
 	else
 		snprintf(buf, sz, "(chip %#x)", chipid);
 	return buf;
@@ -5105,7 +5105,7 @@ static int sky2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	INIT_WORK(&hw->restart_work, sky2_restart);
 
 	pci_set_drvdata(pdev, hw);
-	pdev->d3_delay = 300;
+	pdev->d3hot_delay = 300;
 
 	return 0;
 

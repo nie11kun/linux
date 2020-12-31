@@ -1102,8 +1102,6 @@ static irqreturn_t nspintr(int irq, void *dev_id)
 		nsp_index_write(base, SCSIBUSCTRL, SCSI_ATN | AUTODIRECTION | ACKENB);
 		return IRQ_HANDLED;
 
-		break;
-
 	case PH_RESELECT:
 		//nsp_dbg(NSP_DEBUG_INTR, "phase reselect");
 		// *sync_neg = SYNC_NOT_YET;
@@ -1113,7 +1111,7 @@ static irqreturn_t nspintr(int irq, void *dev_id)
 			nsp_scsi_done(tmpSC);
 			return IRQ_HANDLED;
 		}
-		/* fall thru */
+		fallthrough;
 	default:
 		if ((irq_status & (IRQSTATUS_SCSI | IRQSTATUS_FIFO)) == 0) {
 			return IRQ_HANDLED;

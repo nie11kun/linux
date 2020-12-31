@@ -486,7 +486,8 @@ static int kvm_unmap_hva_handler(struct kvm *kvm, gfn_t gfn, gfn_t gfn_end,
 	return 1;
 }
 
-int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
+int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end,
+			unsigned flags)
 {
 	handle_hva_to_gpa(kvm, start, end, &kvm_unmap_hva_handler, NULL);
 
@@ -1073,6 +1074,7 @@ int kvm_mips_handle_commpage_tlb_fault(unsigned long badvaddr,
 {
 	kvm_pfn_t pfn;
 	pte_t *ptep;
+	pgprot_t prot;
 
 	ptep = kvm_trap_emul_pte_for_gva(vcpu, badvaddr);
 	if (!ptep) {
@@ -1082,7 +1084,8 @@ int kvm_mips_handle_commpage_tlb_fault(unsigned long badvaddr,
 
 	pfn = PFN_DOWN(virt_to_phys(vcpu->arch.kseg0_commpage));
 	/* Also set valid and dirty, so refill handler doesn't have to */
-	*ptep = pte_mkyoung(pte_mkdirty(pfn_pte(pfn, PAGE_SHARED)));
+	prot = vm_get_page_prot(VM_READ|VM_WRITE|VM_SHARED);
+	*ptep = pte_mkyoung(pte_mkdirty(pfn_pte(pfn, prot)));
 
 	/* Invalidate this entry in the TLB, guest kernel ASID only */
 	kvm_mips_host_tlb_inv(vcpu, badvaddr, false, true);

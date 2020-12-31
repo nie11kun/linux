@@ -557,6 +557,7 @@ static void cpcap_adc_setup_bank(struct cpcap_adc *ddata,
 		break;
 	case CPCAP_ADC_BATTP_PI16 ... CPCAP_ADC_BATTI_PI17:
 		value1 |= CPCAP_BIT_RAND1;
+		break;
 	default:
 		break;
 	}
@@ -690,7 +691,7 @@ static void cpcap_adc_phase(struct cpcap_adc_request *req)
 		break;
 	case CPCAP_ADC_BATTI_PI17:
 		index = req->bank_index;
-		/* fallthrough */
+		fallthrough;
 	default:
 		req->result += conv_tbl[index].cal_offset;
 		req->result += conv_tbl[index].align_offset;

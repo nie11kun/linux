@@ -77,6 +77,7 @@ static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
 			if ((entry->map->offset & 0xffffffff) ==
 			    (map->offset & 0xffffffff))
 				return entry;
+			break;
 		default: /* Make gcc happy */
 			;
 		}
@@ -537,7 +538,7 @@ int drm_legacy_rmmap_locked(struct drm_device *dev, struct drm_local_map *map)
 	switch (map->type) {
 	case _DRM_REGISTERS:
 		iounmap(map->handle);
-		/* FALLTHROUGH */
+		fallthrough;
 	case _DRM_FRAME_BUFFER:
 		arch_phys_wc_del(map->mtrr);
 		break;

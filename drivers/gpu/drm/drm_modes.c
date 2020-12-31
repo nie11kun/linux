@@ -1889,7 +1889,7 @@ drm_mode_create_from_cmdline_mode(struct drm_device *dev,
 EXPORT_SYMBOL(drm_mode_create_from_cmdline_mode);
 
 /**
- * drm_crtc_convert_to_umode - convert a drm_display_mode into a modeinfo
+ * drm_mode_convert_to_umode - convert a drm_display_mode into a modeinfo
  * @out: drm_mode_modeinfo struct to return to the user
  * @in: drm_display_mode to use
  *
@@ -1930,7 +1930,7 @@ void drm_mode_convert_to_umode(struct drm_mode_modeinfo *out,
 	default:
 		WARN(1, "Invalid aspect ratio (0%x) on mode\n",
 		     in->picture_aspect_ratio);
-		/* fall through */
+		fallthrough;
 	case HDMI_PICTURE_ASPECT_NONE:
 		out->flags |= DRM_MODE_FLAG_PIC_AR_NONE;
 		break;
@@ -1941,7 +1941,7 @@ void drm_mode_convert_to_umode(struct drm_mode_modeinfo *out,
 }
 
 /**
- * drm_crtc_convert_umode - convert a modeinfo into a drm_display_mode
+ * drm_mode_convert_umode - convert a modeinfo into a drm_display_mode
  * @dev: drm device
  * @out: drm_display_mode to return to the user
  * @in: drm_mode_modeinfo to use

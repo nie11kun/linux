@@ -475,6 +475,12 @@ static int j1939_sk_bind(struct socket *sock, struct sockaddr *uaddr, int len)
 			goto out_release_sock;
 		}
 
+		if (!(ndev->flags & IFF_UP)) {
+			dev_put(ndev);
+			ret = -ENETDOWN;
+			goto out_release_sock;
+		}
+
 		priv = j1939_netdev_start(ndev);
 		dev_put(ndev);
 		if (IS_ERR(priv)) {
@@ -1086,7 +1092,7 @@ static int j1939_sk_send_loop(struct j1939_priv *priv,  struct sock *sk,
 		break;
 	case -ERESTARTSYS:
 		ret = -EINTR;
-		/* fall through */
+		fallthrough;
 	case -EAGAIN: /* OK */
 		if (todo_size != size)
 			ret = size - todo_size;

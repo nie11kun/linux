@@ -164,7 +164,7 @@ DEVICE_ATTR(beiscsi_active_session_count, S_IRUGO,
 	     beiscsi_active_session_disp, NULL);
 DEVICE_ATTR(beiscsi_free_session_count, S_IRUGO,
 	     beiscsi_free_session_disp, NULL);
-struct device_attribute *beiscsi_attrs[] = {
+static struct device_attribute *beiscsi_attrs[] = {
 	&dev_attr_beiscsi_log_enable,
 	&dev_attr_beiscsi_drvr_ver,
 	&dev_attr_beiscsi_adapter_family,
@@ -1532,7 +1532,7 @@ beiscsi_hdl_get_handle(struct beiscsi_conn *beiscsi_conn,
 		break;
 	case UNSOL_DATA_DIGEST_ERROR_NOTIFY:
 		error = 1;
-		/* fall through */
+		fallthrough;
 	case UNSOL_DATA_NOTIFY:
 		pasync_handle = pasync_ctx->async_entry[ci].data;
 		break;

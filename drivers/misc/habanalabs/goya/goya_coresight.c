@@ -12,8 +12,6 @@
 
 #include <uapi/misc/habanalabs.h>
 
-#include <linux/coresight.h>
-
 #define GOYA_PLDM_CORESIGHT_TIMEOUT_USEC	(CORESIGHT_TIMEOUT_USEC * 100)
 
 #define SPMU_SECTION_SIZE		DMA_CH_0_CS_SPMU_MAX_OFFSET
@@ -362,10 +360,16 @@ static int goya_config_etf(struct hl_device *hdev,
 }
 
 static int goya_etr_validate_address(struct hl_device *hdev, u64 addr,
-		u32 size)
+		u64 size)
 {
 	struct asic_fixed_properties *prop = &hdev->asic_prop;
 	u64 range_start, range_end;
+
+	if (addr > (addr + size)) {
+		dev_err(hdev->dev,
+			"ETR buffer size %llu overflow\n", size);
+		return false;
+	}
 
 	if (hdev->mmu_enable) {
 		range_start = prop->dmmu.start_addr;

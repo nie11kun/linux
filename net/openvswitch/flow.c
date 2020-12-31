@@ -294,6 +294,10 @@ static bool icmp6hdr_ok(struct sk_buff *skb)
 
 /**
  * Parse vlan tag from vlan header.
+ * @skb: skb containing frame to parse
+ * @key_vh: pointer to parsed vlan tag
+ * @untag_vlan: should the vlan header be removed from the frame
+ *
  * Returns ERROR on memory error.
  * Returns 0 if it encounters a non-vlan or incomplete packet.
  * Returns 1 after successfully parsing vlan tag.
@@ -675,7 +679,7 @@ static int key_extract_l3l4(struct sk_buff *skb, struct sw_flow_key *key)
 			case -EINVAL:
 				memset(&key->ip, 0, sizeof(key->ip));
 				memset(&key->ipv6.addr, 0, sizeof(key->ipv6.addr));
-				/* fall-through */
+				fallthrough;
 			case -EPROTO:
 				skb->transport_header = skb->network_header;
 				error = 0;
